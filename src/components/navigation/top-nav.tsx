@@ -17,11 +17,8 @@ const TopNav = () => {
           </Link>
         </div>
         <div className="space-x-4">
-          <Link href="/about">
-            <span className="text-gray-800 hover:text-gray-600">About</span>
-          </Link>
-          <Link href="/contact">
-            <span className="text-gray-800 hover:text-gray-600">Contact</span>
+          <Link href="/profileList">
+            <span className="text-gray-800 hover:text-gray-600">Profiles</span>
           </Link>
           {status === "loading" ? (
             <p>Loading...</p>

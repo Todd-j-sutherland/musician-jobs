@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { nextauthOptions } from "@/lib/nextauth-options";
 import connectDB from "@/lib/mongodb";
 import User from "@/lib/models/user.model";
-import ProfileModel from "@/models/Profiles";
+import ProfileModel from "@/lib/models/profile.model";
 
 export async function getUserSession() {
   const session = await getServerSession(nextauthOptions);
