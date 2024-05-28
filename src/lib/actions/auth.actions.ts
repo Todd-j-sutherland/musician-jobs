@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { nextauthOptions } from "@/lib/nextauth-options";
 import connectDB from "@/lib/mongodb";
 import User from "@/lib/models/user.model";
+import ProfileModel from "@/models/Profiles";
 
 export async function getUserSession() {
   const session = await getServerSession(nextauthOptions);
@@ -26,12 +27,30 @@ export async function signInWithOauth({
   account,
   profile,
 }: SignInWithOauthParams) {
-  // console.log({account, profile})
   connectDB();
 
   const user = await User.findOne({ email: profile.email });
 
-  if (user) return true;
+  if (user) {
+    // Check if profile exists
+    const existingProfile = await ProfileModel.findOne({ userId: user._id });
+    if (!existingProfile) {
+      // Ensure all required fields have default values
+      const newProfile = {
+        userId: user._id,
+        name: user.name || "Default Name",
+        instrument: "Not Specified",
+        location: "Not Specified",
+        level: "Not Specified",
+        description: "",
+      };
+
+      // Create a new profile
+      await ProfileModel.create(newProfile);
+    }
+
+    return true;
+  }
 
   const newUser = new User({
     name: profile.name,
@@ -40,8 +59,21 @@ export async function signInWithOauth({
     provider: account.provider,
   });
 
-  // console.log(newUser)
   await newUser.save();
+
+  // Create profile for the new user
+  const newProfile = {
+    userId: newUser._id,
+    name: newUser.name || "Default Name",
+    instrument: "Not Specified",
+    location: "Not Specified",
+    level: "Not Specified",
+    description: "",
+  };
+
+  console.log("Profile data to be saved for new user:", newProfile);
+
+  await ProfileModel.create(newProfile);
 
   return true;
 }
