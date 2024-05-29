@@ -11,6 +11,9 @@ const ProfileSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    email: {
+      type: String,
+    },
     instrument: {
       type: String,
       // required: true,

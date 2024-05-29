@@ -61,10 +61,10 @@ export async function signInWithOauth({
 
   await newUser.save();
 
-  // Create profile for the new user
   const newProfile = {
     userId: newUser._id,
     name: newUser.name || "Default Name",
+    email: newUser.email,
     instrument: "Not Specified",
     location: "Not Specified",
     level: "Not Specified",
