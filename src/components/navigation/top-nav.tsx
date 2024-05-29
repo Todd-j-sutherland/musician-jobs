@@ -7,26 +7,24 @@ const TopNav = () => {
   const { data: session, status } = useSession();
 
   return (
-    <nav className="bg-white border-b border-gray-200 shadow-md">
-      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-        <div className="text-lg font-semibold">
-          <Link href="/">
-            <span className="text-gray-800 hover:text-gray-600">
-              Musician App
-            </span>
+    <nav className="bg-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="text-xl font-bold">
+          <Link href="/" className="hover:text-secondary">
+            Musician App
           </Link>
         </div>
-        <div className="space-x-4">
-          <Link href="/profileList">
-            <span className="text-gray-800 hover:text-gray-600">Profiles</span>
+        <div className="flex space-x-6 items-center">
+          <Link href="/profileList" className="hover:text-secondary">
+            Search Musicians
           </Link>
           {status === "loading" ? (
             <p>Loading...</p>
           ) : session ? (
             <>
-              <span className="text-gray-800">Hello, {session.user.name}</span>
+              <span className="">Hello, {session.user?.name}</span>
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary-dark"
                 onClick={() => signOut()}
               >
                 Sign Out
@@ -34,7 +32,7 @@ const TopNav = () => {
             </>
           ) : (
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary-dark"
               onClick={() => signIn()}
             >
               Sign In
