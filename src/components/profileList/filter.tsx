@@ -1,86 +1,94 @@
-import { useEffect, useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
+import { Form, FormItem, FormLabel, FormControl, Input } from "@/components/ui";
+import { useForm, Controller } from "react-hook-form";
 
-const ProfileFilter = () => {
-  const [profiles, setProfiles] = useState([]);
-  const [filters, setFilters] = useState({
-    instrument: "",
-    location: "",
-    level: "",
-  });
+const ProfileFilter = ({ filters, onFilterChange }) => {
+  const [localFilters, setLocalFilters] = useState(filters);
+  const methods = useForm({ defaultValues: filters });
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      const query = new URLSearchParams(filters).toString();
-      try {
-        const response = await fetch(`/api/profiles?${query}`);
-        const data = await response.json();
-        setProfiles(data.data);
-      } catch (error) {
-        console.error("Error fetching profiles:", error);
-      }
-    };
+    setLocalFilters(filters);
+    methods.reset(filters);
+  }, [filters, methods]);
 
-    fetchProfiles();
-  }, [filters]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  const handleChange = (name, value) => {
+    const newFilters = { ...localFilters, [name]: value };
+    setLocalFilters(newFilters);
+    onFilterChange(newFilters);
   };
-  console.log("profiles", profiles);
+
   return (
-    <div className="container mx-auto py-4">
-      <div className="mb-4">
-        <label
-          htmlFor="instrument"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Instrument
-        </label>
-        <input
-          type="text"
-          id="instrument"
+    <Form {...methods}>
+      <form className="space-y-4">
+        <Controller
           name="instrument"
-          value={filters.instrument}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          control={methods.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="instrument">Instrument</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="text"
+                  id="instrument"
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handleChange("instrument", e.target.value);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="location"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Location
-        </label>
-        <input
-          type="text"
-          id="location"
+        <Controller
           name="location"
-          value={filters.location}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          control={methods.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="location">Location</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="text"
+                  id="location"
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handleChange("location", e.target.value);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="level"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Level
-        </label>
-        <input
-          type="text"
-          id="level"
+        <Controller
           name="level"
-          value={filters.level}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          control={methods.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="level">Level</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="text"
+                  id="level"
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handleChange("level", e.target.value);
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 };
 

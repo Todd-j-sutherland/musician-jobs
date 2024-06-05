@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { signIn } from "next-auth/react";
-import { userSignInValidation } from "@/lib/validations/auth";
-import Link from "next/link";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { signUpWithCredentials } from "@/lib/actions/auth.actions";
 import {
   Button,
   Input,
@@ -18,30 +17,31 @@ import {
   CardContent,
 } from "@/components/ui";
 
-interface SignInFormProps {
-  callbackUrl: string;
-}
+const userSignUpValidation = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 interface FormValues {
+  name: string;
   email: string;
   password: string;
 }
 
-const SignInForm = ({ callbackUrl }: SignInFormProps) => {
+const SignUpForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    resolver: zodResolver(userSignUpValidation),
+  });
 
   const onSubmit = async (data: FormValues) => {
     try {
-      userSignInValidation.parse(data);
-      await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        callbackUrl,
-      });
+      await signUpWithCredentials(data);
+      // Redirect or show success message
     } catch (error) {
       console.error(error);
     }
@@ -50,10 +50,23 @@ const SignInForm = ({ callbackUrl }: SignInFormProps) => {
   return (
     <Card className="max-w-md mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
-        <h2 className="text-2xl font-semibold">Sign In</h2>
+        <h2 className="text-2xl font-semibold">Sign Up</h2>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Your name"
+              {...register("name")}
+              className="mt-1"
+            />
+            {errors.name && (
+              <p className="text-red-600 text-sm">{errors.name.message}</p>
+            )}
+          </div>
           <div>
             <Label htmlFor="email">Email</Label>
             <Input
@@ -81,26 +94,12 @@ const SignInForm = ({ callbackUrl }: SignInFormProps) => {
             )}
           </div>
           <Button className="w-full mt-4" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Sign In"}
+            {isSubmitting ? "Submitting..." : "Sign Up"}
           </Button>
         </form>
-        {/* <Divider className="my-4">or</Divider> */}
-        <Button
-          className="w-full mt-2"
-          variant="outline"
-          onClick={() => signIn("google", { callbackUrl })}
-        >
-          Sign in with Google
-        </Button>
-        <p className="text-center text-sm text-gray-600 mt-2">
-          Don&apos;t have an account?&nbsp;
-          <Link className="text-blue-600 hover:underline" href="/signup">
-            Sign Up
-          </Link>
-        </p>
       </CardContent>
     </Card>
   );
 };
 
-export default SignInForm;
+export default SignUpForm;

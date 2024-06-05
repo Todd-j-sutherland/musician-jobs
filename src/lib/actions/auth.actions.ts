@@ -101,7 +101,6 @@ export interface UpdateUserProfileParams {
 
 export async function updateUserProfile({ name }: UpdateUserProfileParams) {
   const session = await getServerSession(nextauthOptions);
-  // console.log(session)
 
   connectDB();
 
@@ -143,7 +142,7 @@ export async function signUpWithCredentials({
 
   try {
     const user = await User.findOne({ email });
-
+    console.log(name, email, password);
     if (user) {
       throw new Error("User already exists.");
     }
@@ -178,6 +177,7 @@ export async function signInWithCredentials({
   connectDB();
 
   const user = await User.findOne({ email });
+  console.log("user", user);
 
   if (!user) {
     throw new Error("Invalid email or password!");
