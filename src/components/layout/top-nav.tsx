@@ -18,6 +18,12 @@ const TopNav = () => {
           <Link href="/profileList" className="hover:text-secondary">
             Search Musicians
           </Link>
+          <Link href="/job-posting" className="hover:text-secondary">
+            Create Job
+          </Link>
+          <Link href="/jobs" className="hover:text-secondary">
+            Job Listing
+          </Link>
           {status === "loading" ? (
             <p>Loading...</p>
           ) : session ? (
